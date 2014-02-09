@@ -1,0 +1,130 @@
+package com.sample.vaadin;
+
+import com.vaadin.Application;
+import com.vaadin.ui.*;
+import com.vaadin.ui.Window;
+
+public class Main extends Application{
+
+    final Window mainWindow = new Window("Promand 2014");
+    final ListSelect select = new ListSelect("Left column selection");
+    final ListSelect select2 = new ListSelect("Right column selection");
+
+    @Override
+    public void init() {
+
+        HorizontalLayout layout = new HorizontalLayout();
+        VerticalLayout layout2 = new VerticalLayout();
+        VerticalLayout layout3 = new VerticalLayout();
+
+
+        select.addItem(new Numbers("One").getName());
+        select.addItem(new Numbers("Two").getName());
+        select.addItem(new Numbers("Three").getName());
+        select.addItem(new Numbers("Four").getName());
+        select.addItem(new Numbers("Five").getName());
+
+        select2.addItem(new Numbers("Six").getName());
+        select2.addItem(new Numbers("Seven").getName());
+        select2.addItem(new Numbers("Eight").getName());
+
+        select2.setItemCaption(1,"Six");
+        select2.setItemCaption(2,"Seven");
+        select2.setItemCaption(3,"Eight");
+
+        select.setColumns(10);
+        select.setNullSelectionAllowed(false);
+        select.setNewItemsAllowed(true);
+
+        select2.setColumns(10);
+        select2.setNullSelectionAllowed(false);
+
+
+        Button info = new Button("Checkout");
+        info.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                String data = " ";
+                for (int i=1; i<=select2.size();i++){
+                    data +=(String)select2.getItemCaption(i);
+                    data += " ";
+                }
+                mainWindow.showNotification(data);
+            }
+        });
+
+        Button moveRight = new Button(">");
+        moveRight.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                try{
+                    select2.addItem(select.getValue());
+                    select2.setItemCaption(select2.size(), (String) select.getValue());
+                    select.removeItem(select.getValue());
+                }
+                catch (Exception e)
+                {
+                    mainWindow.showNotification("Choose element to move");
+                }
+            }
+        });
+
+        Button moveLeft = new Button("<");
+        moveLeft.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                try{
+                    select.addItem(select2.getValue());
+                    for(int i=1; i<=select2.size();i++){
+                        if(select2.getItemCaption(i)==select2.getValue()){
+                            do {
+                                select2.setItemCaption(i, select2.getItemCaption(i+1));
+                                i++;
+
+                            }while(i<=select2.size());
+                        }
+                    }
+                    select2.removeItem(select2.getValue());
+
+
+                }
+                catch (Exception e)
+                {
+                    mainWindow.showNotification("Choose element to move");
+                }
+            }
+        });
+
+        Button remove = new Button("Remove (from the left column)");
+        remove.addListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                try{
+                    select.removeItem(select.getValue());
+                }
+                catch (Exception e)
+                {
+                    mainWindow.showNotification("Choose element to remove");
+                }
+            }
+        });
+
+        layout.addComponent(select);
+        layout.addComponent(layout2);
+        layout2.addComponent(moveLeft);
+        layout2.addComponent(moveRight);
+        layout.addComponent(layout3);
+        layout3.addComponent(select2);
+        layout3.addComponent(info);
+        layout.addComponent(remove);
+
+        layout.setComponentAlignment(layout2, Alignment.MIDDLE_CENTER);
+        layout.setComponentAlignment(remove,Alignment.BOTTOM_LEFT);
+
+        layout2.setHeight("100px");
+
+
+        mainWindow.addComponent(layout);
+        setMainWindow(mainWindow);
+    }
+}
