@@ -1,0 +1,14 @@
+package com.sample.vaadin;
+
+public class Numbers {
+
+    String name;
+
+    public Numbers(String c_name){
+        name = c_name;
+    }
+
+    public String getName(){
+        return name;
+    }
+}
